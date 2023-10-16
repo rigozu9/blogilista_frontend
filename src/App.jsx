@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './index.css'
@@ -15,10 +16,6 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [msgType, setMsgType] = useState(true)
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -32,7 +29,7 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [])  
 
   const showSuccessMsg = (successMsg) => {
     setMessage(successMsg)
@@ -46,31 +43,6 @@ const App = () => {
     setTimeout(() => {setMessage(null)}, 5000)
   }
 
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <h2>log in to application</h2>
-      <Notification message={message} type={msgType}/>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
-  )
   const handleLogin = async (event) => {
     event.preventDefault()
     
@@ -92,82 +64,47 @@ const App = () => {
       showErrorMsg(response.data.error)
   }
   }
-  
-  const addBlog = async (event) => {
-    event.preventDefault()
-  
-    const blogObject = {
-      title,
-      author,
-      url,
-    }
-  
-    try {
-      const createdBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(createdBlog))
-      showSuccessMsg(`a new blog ${ createdBlog.title } by ${ createdBlog.author } added`)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-    } catch (error) {
-      console.error('Error creating blog:', error)
-    }
-  }
-  
-
-  const blogForm = () => (
-    <>
-      <h2>create new</h2>
-        <form onSubmit={addBlog}>
-        <div>
-          title: {}
-          <input 
-            type="text"
-            value={title}
-            name="title"
-            onChange={({ target }) => {setTitle(target.value)}}
-          />
-        </div>
-        <div>
-          author: {}
-          <input 
-            type="text"
-            value={author}
-            name="author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url: {}
-          <input 
-            type="text"
-            value={url}
-            name="url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <div><button type="submit">create</button></div>
-        </form>  
-    </>
-  )
 
   const handleLogOut = () => {
     setUser(null)
     window.localStorage.clear()
   } 
 
+  const handleUsername = ({ target }) => {
+    setUsername(target.value)
+  }
+
+  const handlePassword = ({ target }) => {
+    setPassword(target.value)
+  }
+
+  const loginForm = () => (
+    <LoginForm 
+      handleLogin={handleLogin}
+      username={username}
+      password={password}
+      handleUsername={handleUsername}
+      handlePassword={handlePassword}
+      message={message}
+      type={msgType}
+    />
+  )
+
   const showBlogs = () => (
     <>
       <h1>blogs</h1>
-      <Notification message={message} type={msgType}/>
+      <Notification 
+        message={message} 
+        type={msgType}/>
       <p>
         {user.name} logged in {}
         <button onClick={handleLogOut}>logout</button>
       </p>
-      <>{blogForm()}</>
-      {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      <BlogForm 
+        blogs={blogs}
+        setBlogs={setBlogs}
+        showSuccessMsg={showSuccessMsg}
+      />
     </>
   )
 
