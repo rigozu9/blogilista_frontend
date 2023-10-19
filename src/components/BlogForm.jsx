@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import blogService from '../services/blogs.js'
-import Blog from './Blog'
 
-const BlogForm  = ({ blogs, setBlogs, showSuccessMsg }) => {
+const BlogForm  = ({ blogs, setBlogs, showSuccessMsg, createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -11,16 +9,11 @@ const BlogForm  = ({ blogs, setBlogs, showSuccessMsg }) => {
     event.preventDefault()
 
     try {
-      const blogObject = await 
-      
-      blogService
-        .create({
+      createBlog({
           title,
           author,
           url
         })
-      setBlogs(blogs.concat(blogObject))
-      showSuccessMsg(`a new blog ${ blogObject.title } by ${ blogObject.author } added`)
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -62,9 +55,6 @@ return (
     <div>
       <button type="submit">create</button>
     </div>
-    {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
     </form>  
   </>
 )
