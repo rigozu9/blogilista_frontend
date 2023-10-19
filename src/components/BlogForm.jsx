@@ -21,6 +21,7 @@ const BlogForm  = ({ createBlog }) => {
       console.error('Error creating blog:', error)
     }
   }
+  
 return (
   <>
   <h2>create new</h2>
