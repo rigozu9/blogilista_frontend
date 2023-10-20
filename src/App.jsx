@@ -96,7 +96,7 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const addBlog = (blogObject) => {
+  const addBlog = (blogObject) => { 
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
@@ -111,6 +111,16 @@ const App = () => {
       const updatedBlog = await blogService.like(id, newBlog)
       const newBlogs = blogs.map(blog => blog.id === id ? updatedBlog : blog)
       setBlogs(newBlogs)
+    } catch ({ response }) {
+      showErrorMsg(response.data.error)
+    } 
+  }
+
+  const removeBlog = async id => {
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      showSuccessMsg('blog deleted succesfully!')
     } catch ({ response }) {
       showErrorMsg(response.data.error)
     } 
@@ -140,7 +150,9 @@ const App = () => {
           <Blog 
             key={blog.id}
             blog={blog}
-            updateLikes={updateLikes}/>)}
+            updateLikes={updateLikes}
+            removeBlog={removeBlog}
+            username={user.username}/>)}
     </>
   )
 
