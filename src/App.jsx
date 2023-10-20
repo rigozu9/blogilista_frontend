@@ -13,19 +13,19 @@ import './index.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  
+
   const [message, setMessage] = useState(null)
   const [msgType, setMsgType] = useState(true)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
-  
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
@@ -33,7 +33,7 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
     }
-  }, [])  
+  }, [])
 
   const showSuccessMsg = (successMsg) => {
     setMessage(successMsg)
@@ -49,7 +49,7 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
@@ -63,16 +63,16 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      
+
     } catch ({ response }) {
       showErrorMsg(response.data.error)
-  }
+    }
   }
 
   const handleLogOut = () => {
     setUser(null)
     window.localStorage.clear()
-  } 
+  }
 
   const handleUsername = ({ target }) => {
     setUsername(target.value)
@@ -83,7 +83,7 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <LoginForm 
+    <LoginForm
       handleLogin={handleLogin}
       username={username}
       password={password}
@@ -96,7 +96,7 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const addBlog = (blogObject) => { 
+  const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
@@ -113,7 +113,7 @@ const App = () => {
       setBlogs(newBlogs)
     } catch ({ response }) {
       showErrorMsg(response.data.error)
-    } 
+    }
   }
 
   const removeBlog = async id => {
@@ -123,21 +123,21 @@ const App = () => {
       showSuccessMsg('blog deleted succesfully!')
     } catch ({ response }) {
       showErrorMsg(response.data.error)
-    } 
+    }
   }
 
   const showBlogs = () => (
     <>
       <h1>blogs</h1>
-      <Notification 
-        message={message} 
+      <Notification
+        message={message}
         type={msgType}/>
       <p>
         {user.name} logged in {}
         <button onClick={handleLogOut}>logout</button>
       </p>
       <Togglable buttonLabel="create new blog" cancelLabel="cancel" ref={blogFormRef}>
-        <BlogForm 
+        <BlogForm
           blogs={blogs}
           setBlogs={setBlogs}
           showSuccessMsg={showSuccessMsg}
@@ -147,7 +147,7 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map(blog =>
-          <Blog 
+          <Blog
             key={blog.id}
             blog={blog}
             updateLikes={updateLikes}

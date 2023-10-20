@@ -16,7 +16,7 @@ const LoginForm = ({ handleLogin, username, password, handleUsername, handlePass
       </div>
       <div>
         password {}
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -24,8 +24,8 @@ const LoginForm = ({ handleLogin, username, password, handleUsername, handlePass
         />
       </div>
       <button type="submit">login</button>
-    </form>      
-  ) 
+    </form>
+  )
 }
 
 export default LoginForm
