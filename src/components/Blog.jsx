@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Togglable from './Togglable';
+import React, { useState } from 'react'
+import Togglable from './Togglable'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateLikes  }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -10,8 +10,16 @@ const Blog = ({ blog }) => {
     marginBottom: 5
   }
 
+
   const handleLike = () => {
-    console.log('Like button clicked!');
+    const blogToUpdate = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+      user: blog.user.id,
+    }
+    updateLikes(blog.id, blogToUpdate)
   }
 
   return (
@@ -21,7 +29,7 @@ const Blog = ({ blog }) => {
           {blog.title} by {blog.author}
           <Togglable buttonLabel="View More" cancelLabel="Hide">
             <div>
-              <p>{blog.url}</p>
+              <p><a href=''>{blog.url}</a></p>
               <p>Likes: {blog.likes} <button onClick={handleLike}>like</button></p>
               <p>Added by: {blog.user.username}</p>
             </div>
