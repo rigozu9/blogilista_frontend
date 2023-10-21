@@ -18,12 +18,14 @@ describe('Blog testing', () => {
 
   let container
   const mockHandler = jest.fn()
+  const mockHandlerLikes = jest.fn()
 
   beforeEach(() => {
     container = render(
       <Blog
         key={blog.id}
         blog={blog}
+        updateLikes={mockHandlerLikes}
         username={blog.user.username}
       />
     )
@@ -38,7 +40,7 @@ describe('Blog testing', () => {
     expect(url).not.toBeVisible()
     expect(likes).not.toBeVisible()
   })
-  test('upon pressing view more url, likes and username shows', async () => {
+  test('upon pressing view more url, likes and username renders', async () => {
     const user = userEvent.setup()
     const button = screen.getByText('View More')
     await user.click(button)
@@ -51,5 +53,16 @@ describe('Blog testing', () => {
     expect(likes).toBeVisible()
     expect(username).toBeVisible()
   })
-//npm run test -- -t 'upon pressing view more url, likes and username shows'
+  //npm run test -- -t 'upon pressing view more url, likes and username renders'
+  test('upon pressin like button twice, callback function called twice', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('View More')
+    await user.click(button)
+
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockHandlerLikes.mock.calls).toHaveLength(2)
+  })
 })
