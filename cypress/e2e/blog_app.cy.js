@@ -33,4 +33,22 @@ describe('Blog app', function() {
       cy.contains('invalid username or password')
     })
   })
+  describe('when logged in', function() {
+    beforeEach(function() {
+      cy.contains('log in').click()
+      cy.get('#username').type('mluukkai')
+      cy.get('#password').type('salainen')
+      cy.get('#login-button').click()
+    })
+    it('A blog can be created', function() {
+      cy.contains('create new blog').click()
+      cy.get('#title').type('Blog By Cypress')
+      cy.get('#author').type('Cypress')
+      cy.get('#url').type('www.cypress.com')
+      cy.get('#create-button').click()
+      cy.contains('create').click()
+      cy.contains('a new blog Blog By Cypress by Cypress added')
+      cy.contains('Blog By Cypress by Cypress')
+    })
+  })
 })
