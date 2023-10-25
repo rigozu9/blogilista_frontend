@@ -1,6 +1,6 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3001/api/testing/reset')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Matti Luukkainen',
       username: 'mluukkai',
@@ -11,9 +11,9 @@ describe('Blog app', function() {
       username: 'testman',
       password: 'test'
     }
-    cy.request('POST', 'http://localhost:3001/api/users/', user)
-    cy.request('POST', 'http://localhost:3001/api/users/', testuser)
-    cy.visit('http://localhost:5173')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, testuser)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {
@@ -67,6 +67,47 @@ describe('Blog app', function() {
       cy.contains('Blog By Cypress by Cypress')
       cy.contains('View More').click()
       cy.contains('like').click()
+    })
+    it('Blogs are ordered by likes in descending order', function() {
+      cy.contains('create new blog').click()
+      cy.get('#title').type('first blog')
+      cy.get('#author').type('first')
+      cy.get('#url').type('www.first.com')
+      cy.get('#create-button').click()
+
+      cy.contains('create new blog').click()
+      cy.get('#title').type('second blog')
+      cy.get('#author').type('second')
+      cy.get('#url').type('www.second.com')
+      cy.get('#create-button').click()
+
+      cy.contains('create new blog').click()
+      cy.get('#title').type('third blog')
+      cy.get('#author').type('third')
+      cy.get('#url').type('www.third.com')
+      cy.get('#create-button').click()
+
+      cy.get('.blog').eq(0).contains('View More').click()
+      cy.get('#like-button').click()
+      cy.get('.blog').eq(0).contains('Hide').click()
+
+      cy.get('.blog').eq(1).contains('View More').click()
+      cy.get('.blog').eq(1).contains('like').click()
+        .wait(500)
+        .click()
+      cy.get('.blog').eq(0).contains('Hide').click()
+
+      cy.get('.blog').eq(2).contains('View More').click()
+      cy.get('.blog').eq(2).contains('like').click()
+        .wait(500)
+        .click()
+        .wait(500)
+        .click()
+      cy.get('.blog').eq(0).contains('Hide').click()
+
+      cy.get('.blog').eq(0).should('contain', 'third blog')   //Most likes (3)
+      cy.get('.blog').eq(1).should('contain', 'second blog')  //Second most likes (2)
+      cy.get('.blog').eq(2).should('contain', 'first blog')   //Least likes (1)
     })
   })
   describe('when logged in and new blog created', function() {
